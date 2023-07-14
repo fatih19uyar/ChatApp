@@ -1,15 +1,16 @@
-/**
- * Created by OFU
- * 07.14.23
- */
-
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import AppStack from './src/navigation/AppStack';
+import AuthStack from './src/navigation/AuthStack';
 
-function App(): JSX.Element {
-  return <></>;
-}
+const App = () => {
+  const userIsLoggedIn = false;
 
-const styles = StyleSheet.create({});
+  return (
+    <NavigationContainer>
+      {userIsLoggedIn ? <AppStack /> : <AuthStack />}
+    </NavigationContainer>
+  );
+};
 
 export default App;
