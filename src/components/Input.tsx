@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
-import {TextInput, IconButton} from 'react-native-paper';
+import {TextInput} from 'react-native-paper';
 import {InputProps} from '../types/type';
 
-const Input: React.FC<InputProps> = ({secret, label}) => {
+const Input: React.FC<InputProps> = ({secret, label, input}) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -18,6 +18,7 @@ const Input: React.FC<InputProps> = ({secret, label}) => {
       />
     );
   };
+
   if (secret) {
     return (
       <TextInput
@@ -25,10 +26,19 @@ const Input: React.FC<InputProps> = ({secret, label}) => {
         label={label}
         secureTextEntry={!passwordVisible}
         right={renderIcon()}
+        value={input.value}
+        onChangeText={input.onChange}
       />
     );
   } else {
-    return <TextInput style={styles.input} label={label} />;
+    return (
+      <TextInput
+        style={styles.input}
+        label={label}
+        value={input.value}
+        onChangeText={input.onChange}
+      />
+    );
   }
 };
 
