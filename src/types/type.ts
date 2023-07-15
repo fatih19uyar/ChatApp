@@ -13,3 +13,10 @@ export interface PressButtonProps {
 export interface LoginScreenProps {
   navigation: any;
 }
+export interface ConversationItemProps {
+  id: string;
+  name: string;
+  message: string;
+  timestamp: string;
+  image: number;
+}

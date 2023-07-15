@@ -21,11 +21,9 @@ const validate = (values: any) => {
   } else if (!isValidEmail(values.email)) {
     errors.email = 'Invalid email format';
   }
-
   if (!values.password) {
     errors.password = 'Password is required';
   }
-
   return errors;
 };
 
