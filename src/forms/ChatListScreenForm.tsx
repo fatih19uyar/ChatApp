@@ -9,13 +9,15 @@ import {
   Modal,
 } from 'react-native';
 import {ConversationItemProps} from '../types/type';
+import {useNavigation} from '@react-navigation/native';
 
-const ConversationItem: React.FC<ConversationItemProps> = ({
-  name,
-  message,
-  timestamp,
-  image,
-}) => {
+interface ChatListScreenFormProps {
+  onConversationPress: (name: string) => void;
+}
+
+const ConversationItem: React.FC<
+  ConversationItemProps & ChatListScreenFormProps
+> = ({name, message, timestamp, image, onConversationPress}) => {
   const [showModal, setShowModal] = useState(false);
 
   const openProfileModal = () => {
@@ -26,18 +28,24 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     setShowModal(false);
   };
 
+  const handleConversationPress = () => {
+    onConversationPress(name);
+  };
+
   return (
     <>
-      <TouchableOpacity style={styles.conversationItem}>
+      <View style={styles.conversationItem}>
         <TouchableOpacity onPress={openProfileModal}>
           <Image source={image} style={styles.avatar} />
         </TouchableOpacity>
-        <View style={styles.content}>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.message}>{message}</Text>
-        </View>
-        <Text style={styles.timestamp}>{timestamp}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={handleConversationPress}>
+          <View style={styles.content}>
+            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.message}>{message}</Text>
+          </View>
+          <Text style={styles.timestamp}>{timestamp}</Text>
+        </TouchableOpacity>
+      </View>
       <Modal visible={showModal} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <TouchableOpacity
@@ -57,7 +65,9 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   );
 };
 
-const ChatListScreenForm: React.FC = () => {
+const ChatListScreenForm: React.FC<ChatListScreenFormProps> = ({
+  onConversationPress,
+}) => {
   const conversations: ConversationItemProps[] = [
     {
       id: '1',
@@ -82,6 +92,7 @@ const ChatListScreenForm: React.FC = () => {
       message={item.message}
       timestamp={item.timestamp}
       image={item.image}
+      onConversationPress={onConversationPress}
     />
   );
 
