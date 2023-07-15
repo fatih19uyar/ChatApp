@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {TextInput, HelperText} from 'react-native-paper';
 import {InputProps} from '../types/type';
 
-const Input: React.FC<InputProps> = ({secret, label, input}) => {
+const Input: React.FC<InputProps> = ({secret, label, input, meta}) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -19,33 +19,33 @@ const Input: React.FC<InputProps> = ({secret, label, input}) => {
     );
   };
 
-  if (secret) {
-    return (
+  const showError = meta.touched && meta.error;
+
+  return (
+    <>
       <TextInput
         style={styles.input}
         label={label}
-        secureTextEntry={!passwordVisible}
-        right={renderIcon()}
+        secureTextEntry={secret && !passwordVisible}
+        right={secret && renderIcon()}
         value={input.value}
         onChangeText={input.onChange}
+        error={showError}
       />
-    );
-  } else {
-    return (
-      <TextInput
-        style={styles.input}
-        label={label}
-        value={input.value}
-        onChangeText={input.onChange}
-      />
-    );
-  }
+      {showError && (
+        <HelperText style={{color: 'white'}} type="error">
+          {meta.error}
+        </HelperText>
+      )}
+    </>
+  );
 };
 
 const styles = StyleSheet.create({
   input: {
     width: '70%',
     margin: 10,
+    marginBottom: 2,
   },
 });
 

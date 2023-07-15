@@ -1,12 +1,10 @@
 import * as React from 'react';
-
 import {
   Field,
   InjectedFormProps,
   formValueSelector,
   reduxForm,
 } from 'redux-form';
-
 import {ConnectedProps, connect} from 'react-redux';
 import PressButton from '../components/PressButton';
 import Input from '../components/Input';
@@ -15,6 +13,27 @@ interface IProps extends ConnectedProps<typeof connector> {
   onRegister: (values: any) => void;
   onForgotPassword: () => void;
 }
+
+const validate = (values: any) => {
+  const errors: any = {};
+  if (!values.email) {
+    errors.email = 'Email is required';
+  } else if (!isValidEmail(values.email)) {
+    errors.email = 'Invalid email format';
+  }
+
+  if (!values.password) {
+    errors.password = 'Password is required';
+  }
+
+  return errors;
+};
+
+const isValidEmail = (email: string) => {
+  // Email format validation logic here
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
 const LoginScreenForm: React.FC<IProps & InjectedFormProps<{}, IProps>> = ({
   handleSubmit,
   onSubmit,
@@ -24,12 +43,6 @@ const LoginScreenForm: React.FC<IProps & InjectedFormProps<{}, IProps>> = ({
   <>
     <Field name="email" component={Input} label="Email" secret={false} />
     <Field name="password" component={Input} label="Password" secret={true} />
-    <PressButton
-      textColor="white"
-      onPress={handleSubmit(onForgotPassword)}
-      text="Forgot Password?"
-      mode="TextButton"
-    />
     <PressButton
       textColor=""
       onPress={handleSubmit(onSubmit)}
@@ -41,6 +54,12 @@ const LoginScreenForm: React.FC<IProps & InjectedFormProps<{}, IProps>> = ({
       textColor=""
       text="SIGNUP"
       mode="Button2"
+    />
+    <PressButton
+      textColor="white"
+      onPress={handleSubmit(onForgotPassword)}
+      text="Forgot Password?"
+      mode="TextButton"
     />
   </>
 );
@@ -60,5 +79,6 @@ export default connector(
     form: 'loginScreen',
     destroyOnUnmount: false,
     forceUnregisterOnUnmount: true,
+    validate,
   })(LoginScreenForm),
 );
