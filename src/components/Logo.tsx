@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   logo: {
     fontWeight: 'bold',
     fontSize: 50,
-    color: '#fb5b5a',
+    color: 'white',
     marginBottom: 40,
   },
 });
