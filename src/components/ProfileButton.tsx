@@ -9,7 +9,7 @@ export default function ProfileButton({goProfile}: ProfileButtonProps) {
   return (
     <View style={[styles.container, {paddingTop: insets.top}]}>
       <TouchableOpacity onPress={goProfile}>
-        <Image style={styles.image} source={require('../assets/profile.png')} />
+        <Image style={styles.image} source={require('../assets/profile.gif')} />
       </TouchableOpacity>
     </View>
   );
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     right: 15,
   },
   image: {
-    width: 24,
-    height: 24,
+    width: 30,
+    height: 30,
   },
 });

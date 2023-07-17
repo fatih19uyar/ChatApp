@@ -35,3 +35,13 @@ export interface MessageItemProps {
   timestamp: string;
   image: number;
 }
+export type SettingsItemProps = {
+  id: string;
+  title: string;
+  onPress: () => void;
+};
+
+export type SettingsScreenFormProps = {
+  background: string;
+  onBackgroundChange: (imageUri: string) => void;
+};

@@ -14,7 +14,7 @@ export default function SettingsButton({goSettings}: SettingsButtonProps) {
       <TouchableOpacity onPress={goSettings}>
         <Image
           style={styles.image}
-          source={require('../assets/settings.png')}
+          source={require('../assets/settings.gif')}
         />
       </TouchableOpacity>
     </View>
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   image: {
-    width: 24,
-    height: 24,
+    width: 30,
+    height: 30,
   },
 });

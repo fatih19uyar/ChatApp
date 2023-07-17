@@ -6,6 +6,7 @@ import ProfileButton from './ProfileButton';
 import {TopBarProps} from '../types/type';
 import {Text} from 'react-native-paper';
 import LogOutButton from './LogOutButton';
+import SettingsButton from './SettingsButton';
 
 const TopBar: React.FC<TopBarProps> = ({
   navigation,
@@ -19,9 +20,16 @@ const TopBar: React.FC<TopBarProps> = ({
   const goProfile = () => {
     navigation.navigate('ProfileScreen');
   };
+  const goSettings = () => {
+    navigation.navigate('SettingsScreen');
+  };
   return (
     <View style={[styles.container, {paddingTop: insets.top}]}>
-      {backStatus ? <BackButton goBack={goBack} /> : null}
+      {backStatus ? (
+        <BackButton goBack={goBack} />
+      ) : (
+        <SettingsButton goSettings={goSettings} />
+      )}
       <View style={styles.titleContainer}>
         <Text style={styles.title}>ChatApp</Text>
       </View>
