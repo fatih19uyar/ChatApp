@@ -9,15 +9,14 @@ import {
   Modal,
 } from 'react-native';
 import {ConversationItemProps} from '../types/type';
-import {useNavigation} from '@react-navigation/native';
 
 interface ChatListScreenFormProps {
-  onConversationPress: (name: string) => void;
+  selectedUser: (name: string) => void;
 }
 
 const ConversationItem: React.FC<
   ConversationItemProps & ChatListScreenFormProps
-> = ({name, message, timestamp, image, onConversationPress}) => {
+> = ({name, message, timestamp, image, selectedUser}) => {
   const [showModal, setShowModal] = useState(false);
 
   const openProfileModal = () => {
@@ -29,7 +28,7 @@ const ConversationItem: React.FC<
   };
 
   const handleConversationPress = () => {
-    onConversationPress(name);
+    selectedUser(name);
   };
 
   return (
@@ -66,7 +65,7 @@ const ConversationItem: React.FC<
 };
 
 const ChatListScreenForm: React.FC<ChatListScreenFormProps> = ({
-  onConversationPress,
+  selectedUser,
 }) => {
   const conversations: ConversationItemProps[] = [
     {
@@ -92,7 +91,7 @@ const ChatListScreenForm: React.FC<ChatListScreenFormProps> = ({
       message={item.message}
       timestamp={item.timestamp}
       image={item.image}
-      onConversationPress={onConversationPress}
+      selectedUser={selectedUser}
     />
   );
 

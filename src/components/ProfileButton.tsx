@@ -1,21 +1,15 @@
 import React from 'react';
 import {TouchableOpacity, Image, StyleSheet, View} from 'react-native';
+import {ProfileButtonProps} from '../types/type';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-type BackButtonProps = {
-  goBack: any;
-};
-
-export default function BackButton({goBack}: BackButtonProps) {
+export default function ProfileButton({goProfile}: ProfileButtonProps) {
   const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.container, {paddingTop: insets.top}]}>
-      <TouchableOpacity onPress={goBack}>
-        <Image
-          style={styles.image}
-          source={require('../assets/arrow_back.png')}
-        />
+      <TouchableOpacity onPress={goProfile}>
+        <Image style={styles.image} source={require('../assets/profile.png')} />
       </TouchableOpacity>
     </View>
   );
@@ -24,8 +18,7 @@ export default function BackButton({goBack}: BackButtonProps) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    left: 15,
-    zIndex: 1,
+    right: 15,
   },
   image: {
     width: 24,

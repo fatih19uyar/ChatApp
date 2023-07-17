@@ -1,23 +1,18 @@
 import React, {useState} from 'react';
 import Background from '../components/Background';
 import ChatListScreenForm from '../forms/ChatListScreenForm';
-import ChatScreen from './ChatScreen';
+import TopBar from '../components/TopBar';
 
 const ChatListScreen: React.FC<any> = ({navigation}) => {
-  const [userName, setUserName] = useState('');
-
-  const onConversationPress = (name: string) => {
+  const selectedUser = (name: string) => {
     console.log(name);
-    setUserName(name);
+    navigation.navigate('ChatScreen', {selectedName: name});
   };
 
   return (
     <>
-      {userName ? (
-        <ChatScreen />
-      ) : (
-        <ChatListScreenForm onConversationPress={onConversationPress} />
-      )}
+      <TopBar navigation={navigation} profileStatus={true} backStatus={false} />
+      <ChatListScreenForm selectedUser={selectedUser} />
     </>
   );
 };

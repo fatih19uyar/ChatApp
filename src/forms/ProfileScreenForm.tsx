@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, Image} from 'react-native';
 
 const ProfileScreen: React.FC = () => {
   return (
-    <>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Image
           source={require('../assets/profile-picture.png')}
@@ -25,7 +25,7 @@ const ProfileScreen: React.FC = () => {
           <Text style={styles.interest}>Cooking</Text>
         </View>
       </View>
-    </>
+    </View>
   );
 };
 

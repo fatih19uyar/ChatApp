@@ -20,3 +20,18 @@ export interface ConversationItemProps {
   timestamp: string;
   image: number;
 }
+export type ProfileButtonProps = {
+  goProfile: any;
+};
+export type TopBarProps = {
+  navigation: any;
+  profileStatus: boolean;
+  backStatus: boolean;
+};
+export interface MessageItemProps {
+  id: string;
+  sender: string;
+  message: string;
+  timestamp: string;
+  image: number;
+}

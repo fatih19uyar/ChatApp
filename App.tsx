@@ -7,7 +7,6 @@ import {Provider, useDispatch, useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {loginSuccess} from './src/redux/slice/authReducer';
 import Toast from 'react-native-toast-message';
-import {ToastAndroid} from 'react-native';
 
 const Stack = () => {
   const dispatch: AppDispatch = useDispatch();

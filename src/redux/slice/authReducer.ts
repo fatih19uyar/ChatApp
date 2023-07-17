@@ -42,16 +42,18 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    logout: state => {
+    logOut: state => {
       state.user = null;
       state.isAuthenticated = false;
       state.loading = false;
       state.error = null;
+      // Kullanıcı bilgilerini AsyncStorage'e silme
+      AsyncStorage.removeItem('user');
     },
   },
 });
 
-export const {loginStart, loginSuccess, loginFailure, logout} =
+export const {loginStart, loginSuccess, loginFailure, logOut} =
   authSlice.actions;
 
 export default authSlice.reducer;
