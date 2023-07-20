@@ -7,6 +7,7 @@ import {Provider, useDispatch, useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {loginSuccess} from './src/redux/slice/authReducer';
 import Toast from 'react-native-toast-message';
+import firebase from './firebaseConfig'; // Firebase yapılandırmasını buradan alıyoruz
 
 const Stack = () => {
   const dispatch: AppDispatch = useDispatch();

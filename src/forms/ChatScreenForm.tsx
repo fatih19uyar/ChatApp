@@ -18,16 +18,32 @@ type ChatScreenProps = {
   onSendMessage: (text: string) => void;
 };
 
-const ChatScreenForm: React.FC<ChatScreenProps> = ({
-  messages,
-  onSendMessage,
-}) => {
+const ChatScreen: React.FC<ChatScreenProps> = ({messages, onSendMessage}) => {
   const [inputText, setInputText] = React.useState('');
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (inputText.trim() !== '') {
-      onSendMessage(inputText);
-      setInputText('');
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        sender: 'me',
+        text: inputText,
+      };
+
+      try {
+        // Firebase Firestore bağlantısını al
+        // const db = firebase.getApp();
+
+        // Yeni mesajı Firestore'a ekle
+        //   await db.collection('messages').add(newMessage);
+
+        // Mesajı gönderme işlevini tetikle
+        onSendMessage(inputText);
+
+        // Metin girişini temizle
+        setInputText('');
+      } catch (error) {
+        console.error('Mesaj gönderilirken bir hata oluştu:', error);
+      }
     }
   };
 
@@ -117,4 +133,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatScreenForm;
+export default ChatScreen;
