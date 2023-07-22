@@ -23,7 +23,6 @@ const ChatScreenForm: React.FC<Props> = ({
 }) => {
   const [inputText, setInputText] = useState('');
   const [showNotification, setShowNotification] = useState(false);
-  const [loading, setLoading] = useState(true); // Yüklenme durumunu tutan değişken
   const [initialLoad, setInitialLoad] = useState(true); // İlk açılış durumunu tutan değişken
   const [sentMessageCount, setSentMessageCount] = useState(0); // Gönderilen mesaj sayısını tutan değişken
   const flatListRef = useRef<FlatList>(null);
@@ -45,13 +44,6 @@ const ChatScreenForm: React.FC<Props> = ({
       }
     }
   }, [messages, initialLoad]);
-
-  // Mesajlar yüklendiğinde loading durumunu false olarak güncelle
-  useEffect(() => {
-    if (messages.length > 0) {
-      setLoading(false);
-    }
-  }, [messages]);
 
   const handleNotificationPress = () => {
     // Bildirime tıklandığında FlatList'i en alta kaydır
@@ -82,15 +74,6 @@ const ChatScreenForm: React.FC<Props> = ({
       setSentMessageCount(count => count + 1);
     }
   };
-
-  // Mesajlar yüklenene kadar ekranda bir yükleme gösterebiliriz
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
