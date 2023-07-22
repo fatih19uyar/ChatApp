@@ -2,15 +2,15 @@ import {MessageItemProps} from '../types/type';
 
 export const messages: MessageItemProps[] = [
   {
-    id: '1',
-    sender: 'John Doe',
+    id: 'KWEHT5MQJEhUY0H2uYi2Ignmgkn1',
+    sender: '123@gmail.com',
     message: 'Hello, how are you?',
     timestamp: '12:30 PM',
     image: require('../assets/profile-picture.png'),
   },
   {
-    id: '2',
-    sender: 'Jane Smith',
+    id: 'OkAnSoWlt2eZvSmABflGn9ysUjF3',
+    sender: 'deneme',
     message: "I'm good, thank you! How about you?",
     timestamp: '12:35 PM',
     image: require('../assets/profile-picture.png'),

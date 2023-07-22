@@ -13,6 +13,9 @@ export interface PressButtonProps {
 export interface LoginScreenProps {
   navigation: any;
 }
+export interface RegisterScreenProps {
+  navigation: any;
+}
 export interface ConversationItemProps {
   id: string;
   name: string;
@@ -44,4 +47,11 @@ export type SettingsItemProps = {
 export type SettingsScreenFormProps = {
   background: string;
   onBackgroundChange: (imageUri: string) => void;
+};
+export type Message = {
+  id: string;
+  sender: string;
+  recipientUserID: string;
+  text: string;
+  time: string;
 };
