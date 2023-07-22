@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import AppStack from './src/navigation/AppStack';
 import AuthStack from './src/navigation/AuthStack';
@@ -14,7 +14,6 @@ const Stack = () => {
   const userIsLoggedIn: boolean = useSelector<RootState, boolean>(
     state => state.authReducer.isAuthenticated,
   );
-
   useEffect(() => {
     const checkUserLoggedIn = async () => {
       if (!userIsLoggedIn) {

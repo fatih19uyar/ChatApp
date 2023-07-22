@@ -4,13 +4,16 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../redux/stores';
 import {logOut} from '../redux/slice/authReducer';
-
+import auth from '@react-native-firebase/auth';
 export default function LogOutButton() {
   const insets = useSafeAreaInsets();
   const dispatch: AppDispatch = useDispatch();
 
   const logOutFun = () => {
-    dispatch(logOut()); // logout eylem yaratıcı fonksiyonunu çağırın
+    auth()
+      .signOut()
+      .then(() => console.log('User signed out!'));
+    dispatch(logOut());
   };
 
   return (
