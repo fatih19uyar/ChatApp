@@ -10,7 +10,7 @@ import PressButton from '../components/PressButton';
 import Input from '../components/Input';
 interface IProps extends ConnectedProps<typeof connector> {
   onSubmit: (values: any) => void;
-  onRegister: (values: any) => void;
+  onRegister: () => void;
   onForgotPassword: () => void;
 }
 
@@ -48,14 +48,14 @@ const LoginScreenForm: React.FC<IProps & InjectedFormProps<{}, IProps>> = ({
       mode="Button1"
     />
     <PressButton
-      onPress={handleSubmit(onRegister)}
+      onPress={onRegister}
       textColor=""
       text="SIGNUP"
       mode="Button2"
     />
     <PressButton
       textColor="white"
-      onPress={handleSubmit(onForgotPassword)}
+      onPress={onForgotPassword}
       text="Forgot Password?"
       mode="TextButton"
     />

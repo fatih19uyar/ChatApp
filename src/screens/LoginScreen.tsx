@@ -4,12 +4,14 @@ import Logo from '../components/Logo';
 import {LoginScreenProps} from '../types/type';
 import LoginScreenForm from '../forms/LoginScreenForm';
 import {useDispatch} from 'react-redux';
-import {loginFailure, loginSuccess} from '../redux/slice/authReducer';
+import {loginSuccess} from '../redux/slice/authReducer';
 import {Snackbar} from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {reset} from 'redux-form';
+import auth from '@react-native-firebase/auth';
 
 const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
   const onRegister = () => {
+    dispatch(reset('loginScreen'));
     navigation.navigate('Register');
   };
   const dispatch = useDispatch();
@@ -20,26 +22,32 @@ const LoginScreen: React.FC<LoginScreenProps> = ({navigation}) => {
     setSnackbarMessage(message);
     setSnackbarVisible(true);
   };
-
   const onSubmit = async (values: any) => {
-    if (values.email === 'Fatih@gmail.com' && values.password === '12345') {
-      // Giriş başarılı
-      const user = {
-        id: '1',
-        username: 'Fatih',
-        email: 'Fatih@gamil.com',
-      };
-      dispatch(loginSuccess(user));
-      await AsyncStorage.setItem('user', JSON.stringify(user));
-    } else {
-      // Giriş başarısız, hatalı kullanıcı adı veya şifre
-      dispatch(loginFailure('AUTH_LOGIN_FAILED'));
-      showSnackbar('Geçersiz kullanıcı adı veya şifre');
-    }
+    await auth()
+      .signInWithEmailAndPassword(values.email, values.password)
+      .then(userCredential => {
+        const {user} = userCredential;
+        const uid: any = user.uid;
+        const email: any = user.email;
+        setTimeout(() => {
+          dispatch(loginSuccess({id: uid, email: email}));
+          dispatch(reset('loginScreen'));
+        }, 500);
+        showSnackbar('Login Success...');
+      })
+      .catch(error => {
+        if (error.code === 'auth/wrong-password')
+          showSnackbar('Wrong Password.');
+        else if (error.code === 'auth/user-not-found') {
+          showSnackbar('User no found.');
+        } else {
+          showSnackbar('System error...');
+        }
+      });
   };
 
   const onForgotPassword = () => {
-    console.log('forgot');
+    showSnackbar('Comming Soon...');
   };
 
   return (

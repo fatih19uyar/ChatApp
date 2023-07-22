@@ -4,7 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 interface AuthState {
   user: {
     id: string;
-    username: string;
     email: string;
   } | null;
   isAuthenticated: boolean;
@@ -29,7 +28,7 @@ const authSlice = createSlice({
     },
     loginSuccess: (
       state,
-      action: PayloadAction<{id: string; username: string; email: string}>,
+      action: PayloadAction<{id: string; email: string}>,
     ) => {
       state.user = action.payload;
       state.isAuthenticated = true;
@@ -37,10 +36,6 @@ const authSlice = createSlice({
       state.error = null;
       // Kullanıcı bilgilerini AsyncStorage'e kaydetme
       AsyncStorage.setItem('user', JSON.stringify(action.payload));
-    },
-    loginFailure: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
     },
     logOut: state => {
       state.user = null;
@@ -53,7 +48,6 @@ const authSlice = createSlice({
   },
 });
 
-export const {loginStart, loginSuccess, loginFailure, logOut} =
-  authSlice.actions;
+export const {loginStart, loginSuccess, logOut} = authSlice.actions;
 
 export default authSlice.reducer;
