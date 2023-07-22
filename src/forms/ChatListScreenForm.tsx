@@ -16,7 +16,7 @@ interface ChatListScreenFormProps {
 
 const ConversationItem: React.FC<
   ConversationItemProps & ChatListScreenFormProps
-> = ({name, message, timestamp, image, selectedUser}) => {
+> = ({id, name, message, timestamp, image, selectedUser}) => {
   const [showModal, setShowModal] = useState(false);
 
   const openProfileModal = () => {
@@ -28,7 +28,7 @@ const ConversationItem: React.FC<
   };
 
   const handleConversationPress = () => {
-    selectedUser(name);
+    selectedUser(id);
   };
 
   return (
@@ -37,7 +37,7 @@ const ConversationItem: React.FC<
         <TouchableOpacity onPress={openProfileModal}>
           <Image source={image} style={styles.avatar} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleConversationPress}>
+        <TouchableOpacity key={id} onPress={handleConversationPress}>
           <View style={styles.content}>
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.message}>{message}</Text>
@@ -69,15 +69,15 @@ const ChatListScreenForm: React.FC<ChatListScreenFormProps> = ({
 }) => {
   const conversations: ConversationItemProps[] = [
     {
-      id: '1',
-      name: 'John Doe',
+      id: 'OkAnSoWlt2eZvSmABflGn9ysUjF3',
+      name: 'Deneme',
       message: 'Hello, how are you?',
       timestamp: '12:30 PM',
       image: require('../assets/profile-picture.png'),
     },
     {
-      id: '2',
-      name: 'Jane Smith',
+      id: 'KWEHT5MQJEhUY0H2uYi2Ignmgkn1',
+      name: '123 User',
       message: 'Hey there! Are you free tonight?',
       timestamp: '11:45 AM',
       image: require('../assets/profile-picture.png'),

@@ -1,14 +1,12 @@
-import React, {useState} from 'react';
-import Background from '../components/Background';
+import React from 'react';
 import ChatListScreenForm from '../forms/ChatListScreenForm';
 import TopBar from '../components/TopBar';
 
 const ChatListScreen: React.FC<any> = ({navigation}) => {
-  const selectedUser = (name: string) => {
-    console.log(name);
-    navigation.navigate('ChatScreen', {selectedName: name});
+  const selectedUser = (id: string) => {
+    console.log(id);
+    navigation.navigate('ChatScreen', {recipientUserID: id});
   };
-
   return (
     <>
       <TopBar navigation={navigation} profileStatus={true} backStatus={false} />

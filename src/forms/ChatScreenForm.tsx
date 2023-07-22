@@ -1,78 +1,119 @@
-import React from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import {
   View,
   Text,
+  FlatList,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
+  Button,
 } from 'react-native';
+import {Message} from '../types/type';
+import Notification from '../components/Notification';
 
-type Message = {
-  id: string;
-  sender: string;
-  text: string;
-};
-
-type ChatScreenProps = {
+type Props = {
   messages: Message[];
   onSendMessage: (text: string) => void;
+  senderUserID: string;
 };
 
-const ChatScreen: React.FC<ChatScreenProps> = ({messages, onSendMessage}) => {
-  const [inputText, setInputText] = React.useState('');
+const ChatScreenForm: React.FC<Props> = ({
+  messages,
+  onSendMessage,
+  senderUserID,
+}) => {
+  const [inputText, setInputText] = useState('');
+  const [showNotification, setShowNotification] = useState(false);
+  const [loading, setLoading] = useState(true); // Yüklenme durumunu tutan değişken
+  const [initialLoad, setInitialLoad] = useState(true); // İlk açılış durumunu tutan değişken
+  const [sentMessageCount, setSentMessageCount] = useState(0); // Gönderilen mesaj sayısını tutan değişken
+  const flatListRef = useRef<FlatList>(null);
 
-  const handleSendMessage = async () => {
-    if (inputText.trim() !== '') {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        sender: 'me',
-        text: inputText,
-      };
+  // Mesajları zamanlarına göre sırala (en yeni en üstte olacak şekilde)
+  const sortedMessages = messages
+    .slice()
+    .sort((a: any, b: any) => a.time - b.time);
 
-      try {
-        // Firebase Firestore bağlantısını al
-        // const db = firebase.getApp();
+  useEffect(() => {
+    // Yeni mesaj geldiğinde bildirimi göster ve otomatik olarak en alta kaydır
+    if (messages.length > 0) {
+      setShowNotification(true);
 
-        // Yeni mesajı Firestore'a ekle
-        //   await db.collection('messages').add(newMessage);
-
-        // Mesajı gönderme işlevini tetikle
-        onSendMessage(inputText);
-
-        // Metin girişini temizle
-        setInputText('');
-      } catch (error) {
-        console.error('Mesaj gönderilirken bir hata oluştu:', error);
+      // İlk açılışta ve mesajlar yüklendiğinde scrollToEnd işlemini gerçekleştir
+      if (initialLoad && flatListRef.current) {
+        flatListRef.current.scrollToEnd({animated: true});
+        setInitialLoad(false); // İlk açılış durumunu false olarak güncelle
       }
+    }
+  }, [messages, initialLoad]);
+
+  // Mesajlar yüklendiğinde loading durumunu false olarak güncelle
+  useEffect(() => {
+    if (messages.length > 0) {
+      setLoading(false);
+    }
+  }, [messages]);
+
+  const handleNotificationPress = () => {
+    // Bildirime tıklandığında FlatList'i en alta kaydır
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({animated: true});
+    }
+    setShowNotification(false); // Bildirimi gizle
+  };
+
+  const renderItem = ({item}: {item: Message}) => {
+    const isSender = item.sender === senderUserID;
+    const containerStyle = isSender
+      ? styles.senderContainer
+      : styles.receiverContainer;
+    const textStyle = isSender ? styles.senderText : styles.receiverText;
+
+    return (
+      <View style={[styles.messageContainer, containerStyle]}>
+        <Text style={textStyle}>{item.text}</Text>
+      </View>
+    );
+  };
+
+  const onSendButtonPress = () => {
+    if (inputText !== '') {
+      onSendMessage(inputText);
+      setInputText('');
+      setSentMessageCount(count => count + 1);
     }
   };
 
+  // Mesajlar yüklenene kadar ekranda bir yükleme gösterebiliriz
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.messagesContainer}>
-        {messages.map(message => (
-          <View
-            key={message.id}
-            style={[
-              styles.messageBubble,
-              message.sender === 'me'
-                ? styles.myMessageBubble
-                : styles.otherMessageBubble,
-            ]}>
-            <Text style={styles.messageText}>{message.text}</Text>
-          </View>
-        ))}
-      </View>
+      {showNotification && <Notification onPress={handleNotificationPress} />}
+      <FlatList
+        ref={flatListRef}
+        data={sortedMessages}
+        keyExtractor={item => item.id}
+        renderItem={renderItem}
+        onContentSizeChange={() => {
+          if (sentMessageCount > 0 && flatListRef.current) {
+            flatListRef.current.scrollToEnd({animated: true});
+          }
+        }}
+      />
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Type a message"
           value={inputText}
           onChangeText={setInputText}
+          placeholder="Type your message..."
         />
-        <TouchableOpacity style={styles.sendButton} onPress={handleSendMessage}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
+        <Button title="Send" onPress={onSendButtonPress} />
       </View>
     </View>
   );
@@ -81,56 +122,50 @@ const ChatScreen: React.FC<ChatScreenProps> = ({messages, onSendMessage}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-end',
-  },
-  messagesContainer: {
-    flex: 1,
     padding: 10,
   },
-  messageBubble: {
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+  messageContainer: {
     marginBottom: 10,
+    padding: 8,
+    borderRadius: 8,
   },
-  myMessageBubble: {
-    backgroundColor: '#DCF8C6',
+  senderContainer: {
     alignSelf: 'flex-end',
+    backgroundColor: '#DCF8C5',
   },
-  otherMessageBubble: {
-    backgroundColor: '#E5E5EA',
+  receiverContainer: {
     alignSelf: 'flex-start',
+    backgroundColor: '#EAEAEA',
   },
-  messageText: {
+  senderText: {
     fontSize: 16,
+    color: 'black',
+  },
+  receiverText: {
+    fontSize: 16,
+    color: 'black',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    backgroundColor: '#F8F8F8',
     borderTopWidth: 1,
-    borderTopColor: '#DDDDDD',
+    borderTopColor: '#ccc',
+    paddingVertical: 8,
   },
   input: {
     flex: 1,
-    height: 40,
-    paddingHorizontal: 10,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginRight: 8,
   },
-  sendButton: {
-    backgroundColor: '#3777F0',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-  },
-  sendButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
-export default ChatScreen;
+export default ChatScreenForm;
