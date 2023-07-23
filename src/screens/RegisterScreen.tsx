@@ -7,6 +7,7 @@ import RegisterScreenForm from '../forms/RegisterScreenForm';
 import TopBar from '../components/TopBar';
 import auth from '@react-native-firebase/auth';
 import {reset} from 'redux-form';
+import {createUserProfile} from '../utils/Firebase';
 
 const RegisterScreen: React.FC<RegisterScreenProps> = ({navigation}) => {
   const dispatch = useDispatch();
@@ -32,7 +33,10 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({navigation}) => {
     }
     auth()
       .createUserWithEmailAndPassword(values.email, values.password)
-      .then(() => {
+      .then(userCredential => {
+        const uid = userCredential.user.uid;
+        // Kullanıcı adını ve UID'yi kullanarak kullanıcı profili oluşturun
+        createUserProfile(uid, values.username);
         showSnackbar('User account created & signed in!', true);
       })
       .catch(error => {
