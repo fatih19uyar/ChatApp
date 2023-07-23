@@ -14,7 +14,7 @@ type ChatScreenProps = {
 
 const ChatScreen: React.FC<ChatScreenProps> = ({navigation, route}) => {
   const [messages, setMessages] = React.useState<Message[]>([]);
-  const {recipientUserID} = route.params;
+  const {recipientUserID, recipientUserName} = route.params;
   const senderUserID: string = useSelector<RootState, string>(
     state => state.authReducer.user?.id ?? '',
   );
@@ -70,16 +70,31 @@ const ChatScreen: React.FC<ChatScreenProps> = ({navigation, route}) => {
           text: text,
           time: Date.now().toString(),
         });
+
+      // Alıcının altında gönderenin son mesajını güncelleyin
+      firebase
+        .database()
+        .ref('lastMessages')
+        .child(recipientUserID)
+        .child(senderUserID)
+        .set({
+          text: text,
+          time: Date.now().toString(),
+        });
     } catch (error) {
       console.log(error);
     }
 
     setMessages(prevMessages => [...prevMessages, newMessage]);
   };
-
   return (
     <>
-      <TopBar navigation={navigation} profileStatus={true} backStatus={true} />
+      <TopBar
+        navigation={navigation}
+        profileStatus={true}
+        backStatus={true}
+        text={recipientUserName}
+      />
       <ChatScreenForm
         senderUserID={senderUserID}
         messages={messages}

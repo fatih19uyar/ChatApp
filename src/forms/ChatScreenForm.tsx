@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {Message} from '../types/type';
 import Notification from '../components/Notification';
+import {convertTimestampToReadableDate} from '../utils/Time';
 
 type Props = {
   messages: Message[];
@@ -58,10 +59,12 @@ const ChatScreenForm: React.FC<Props> = ({
       ? styles.senderContainer
       : styles.receiverContainer;
     const textStyle = isSender ? styles.senderText : styles.receiverText;
-
     return (
       <View style={[styles.messageContainer, containerStyle]}>
         <Text style={textStyle}>{item.text}</Text>
+        <Text style={styles.timeText}>
+          {convertTimestampToReadableDate(parseInt(item.time))}
+        </Text>
       </View>
     );
   };
@@ -147,6 +150,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  timeText: {
+    fontSize: 12,
+    color: '#888888',
   },
 });
 
