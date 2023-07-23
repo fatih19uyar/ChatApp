@@ -12,6 +12,7 @@ const TopBar: React.FC<TopBarProps> = ({
   navigation,
   profileStatus,
   backStatus,
+  text,
 }) => {
   const insets = useSafeAreaInsets();
   const goBack = () => {
@@ -31,7 +32,11 @@ const TopBar: React.FC<TopBarProps> = ({
         <SettingsButton goSettings={goSettings} />
       )}
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>ChatApp</Text>
+        {text ? (
+          <Text style={styles.title}>Chat on '{text}'</Text>
+        ) : (
+          <Text style={styles.title}>ChatApp</Text>
+        )}
       </View>
       {profileStatus ? (
         <ProfileButton goProfile={goProfile} />

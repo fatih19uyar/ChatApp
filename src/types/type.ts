@@ -30,6 +30,7 @@ export type TopBarProps = {
   navigation: any;
   profileStatus: boolean;
   backStatus: boolean;
+  text: string;
 };
 export interface MessageItemProps {
   id: string;
