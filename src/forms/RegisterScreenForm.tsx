@@ -38,6 +38,7 @@ const RegisterScreenForm: React.FC<IProps & InjectedFormProps<{}, IProps>> = ({
   onGoogleSign,
 }) => (
   <View style={styles.container}>
+    <Field name="username" component={Input} label="Username" secret={false} />
     <Field name="email" component={Input} label="Email" secret={false} />
     <Field name="password" component={Input} label="Password" secret={true} />
     <Field
@@ -74,10 +75,12 @@ const mapStateToProps = (state: any) => {
   const email = selector(state, 'email');
   const password = selector(state, 'password');
   const rePassword = selector(state, 'repassword');
+  const username = selector(state, 'username');
   return {
     email,
     password,
     rePassword,
+    username,
   };
 };
 const connector = connect(mapStateToProps);
