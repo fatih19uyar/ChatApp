@@ -56,7 +56,12 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({navigation}) => {
 
   return (
     <Background>
-      <TopBar navigation={navigation} profileStatus={false} backStatus={true} />
+      <TopBar
+        navigation={navigation}
+        profileStatus={false}
+        backStatus={true}
+        text="Register"
+      />
       <RegisterScreenForm
         onRegister={onRegisterMail}
         onGoogleSign={handleGoogleButtonPress}
