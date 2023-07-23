@@ -7,17 +7,23 @@ import {
   FlatList,
   TouchableOpacity,
   Modal,
+  TextInput,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {ConversationItemProps} from '../types/type';
+import {getUserByUsername} from '../utils/Firebase';
+import {convertTimestampToReadableDate} from '../utils/Time';
 
 interface ChatListScreenFormProps {
   selectedUser: (name: string) => void;
+  lastMessage: any;
 }
 
 const ConversationItem: React.FC<
   ConversationItemProps & ChatListScreenFormProps
-> = ({id, name, message, timestamp, image, selectedUser}) => {
+> = ({id, name, text, time, image, selectedUser}) => {
   const [showModal, setShowModal] = useState(false);
+  const [username, setUsername] = useState('');
 
   const openProfileModal = () => {
     setShowModal(true);
@@ -31,6 +37,13 @@ const ConversationItem: React.FC<
     selectedUser(id);
   };
 
+  const handleStartChat = () => {
+    if (username.trim() !== '') {
+      selectedUser(username.trim());
+      setShowModal(false);
+    }
+  };
+
   return (
     <>
       <View style={styles.conversationItem}>
@@ -40,9 +53,9 @@ const ConversationItem: React.FC<
         <TouchableOpacity key={id} onPress={handleConversationPress}>
           <View style={styles.content}>
             <Text style={styles.name}>{name}</Text>
-            <Text style={styles.message}>{message}</Text>
+            <Text style={styles.message}>{text}</Text>
           </View>
-          <Text style={styles.timestamp}>{timestamp}</Text>
+          <Text style={styles.timestamp}>{time}</Text>
         </TouchableOpacity>
       </View>
       <Modal visible={showModal} animationType="slide" transparent>
@@ -55,8 +68,16 @@ const ConversationItem: React.FC<
             {/* User profile details */}
             <Image source={image} style={styles.profileImage} />
             <Text style={styles.profileName}>{name}</Text>
-            <Text style={styles.profileMessage}>{message}</Text>
+            <Text style={styles.profileMessage}>{text}</Text>
             {/* Add more user details here */}
+            <KeyboardAvoidingView behavior="padding">
+              <TextInput
+                style={styles.input}
+                placeholder="Enter username"
+                value={username}
+                onChangeText={setUsername}
+              />
+            </KeyboardAvoidingView>
           </View>
         </View>
       </Modal>
@@ -66,42 +87,73 @@ const ConversationItem: React.FC<
 
 const ChatListScreenForm: React.FC<ChatListScreenFormProps> = ({
   selectedUser,
+  lastMessage,
 }) => {
-  const conversations: ConversationItemProps[] = [
-    {
-      id: 'OkAnSoWlt2eZvSmABflGn9ysUjF3',
-      name: 'Deneme',
-      message: 'Hello, how are you?',
-      timestamp: '12:30 PM',
-      image: require('../assets/profile-picture.png'),
-    },
-    {
-      id: 'KWEHT5MQJEhUY0H2uYi2Ignmgkn1',
-      name: '123 User',
-      message: 'Hey there! Are you free tonight?',
-      timestamp: '11:45 AM',
-      image: require('../assets/profile-picture.png'),
-    },
-  ];
+  const [showStartChatModal, setShowStartChatModal] = useState(false);
+  const [username, setUsername] = useState('');
 
-  const renderConversationItem = ({item}: {item: ConversationItemProps}) => (
-    <ConversationItem
-      id={item.id}
-      name={item.name}
-      message={item.message}
-      timestamp={item.timestamp}
-      image={item.image}
-      selectedUser={selectedUser}
-    />
-  );
+  const openStartChatModal = () => {
+    setShowStartChatModal(true);
+  };
+
+  const closeStartChatModal = () => {
+    setShowStartChatModal(false);
+  };
+
+  const handleStartChat = async (username: string) => {
+    if (username !== '') {
+      const userId: any = await getUserByUsername(username);
+      closeStartChatModal();
+      selectedUser(userId);
+    }
+  };
+  const renderConversationItem = ({item}: {item: ConversationItemProps}) => {
+    return (
+      <ConversationItem
+        id={item.id}
+        name={item.name}
+        text={item.text}
+        time={convertTimestampToReadableDate(parseInt(item.time))}
+        image={require('../assets/profile-picture.png')}
+        selectedUser={selectedUser}
+        lastMessage={undefined}
+      />
+    );
+  };
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={conversations}
+        data={lastMessage}
         keyExtractor={item => item.id}
         renderItem={renderConversationItem}
       />
+      <TouchableOpacity
+        style={styles.startChatButton}
+        onPress={openStartChatModal}>
+        <Text style={styles.startChatButtonText}>+</Text>
+      </TouchableOpacity>
+      <Modal visible={showStartChatModal} animationType="slide" transparent>
+        <View style={styles.modalContainer}>
+          <TouchableOpacity
+            style={styles.modalBackground}
+            onPress={closeStartChatModal}
+          />
+          <View style={styles.startChatModal}>
+            <Text style={styles.startChatTitle}>Start a Chat</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter username"
+              onChangeText={setUsername}
+            />
+            <TouchableOpacity
+              style={styles.startChatSubmitButton}
+              onPress={() => handleStartChat(username)}>
+              <Text style={styles.startChatSubmitButtonText}>Start</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -174,6 +226,55 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#888888',
     textAlign: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#888888',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 10,
+    width: 200,
+  },
+  startChatButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#007AFF',
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+  },
+  startChatButtonText: {
+    fontSize: 32,
+    color: 'white',
+    lineHeight: 32,
+  },
+  startChatModal: {
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  startChatTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  startChatSubmitButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    width: 120,
+    alignItems: 'center',
+  },
+  startChatSubmitButtonText: {
+    fontSize: 16,
+    color: 'white',
   },
 });
 
