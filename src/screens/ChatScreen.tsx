@@ -49,23 +49,34 @@ const ChatScreen: React.FC<ChatScreenProps> = ({navigation, route}) => {
 
   const handleSendMessage = (text: string) => {
     const newMessage: Message = {
-      id: Date.now().toString(), // flatlist için otomatik key oluşturma
-      sender: senderUserID, //gönderen kullanıcının id si
-      recipientUserID: recipientUserID, // gönderilecek kullanıcının id si
-      text: text, // gönderilecek olan mesaj
-      time: Date.now().toString(), // mesaj gönderme zamanı
+      id: Date.now().toString(),
+      sender: senderUserID,
+      recipientUserID: recipientUserID,
+      text: text,
+      time: Date.now().toString(),
     };
-    console.log('message', newMessage);
+
     try {
+      // 'messages' düğümüne yeni mesajı ekleyin
+      firebase.database().ref('messages').push(newMessage);
+
+      // Gönderenin altında alıcının son mesajını güncelleyin
       firebase
         .database()
-        .ref('messages') // 'messages' adlı bir düğüm (node) oluşturuyoruz
-        .push(newMessage);
+        .ref('lastMessages')
+        .child(senderUserID)
+        .child(recipientUserID)
+        .set({
+          text: text,
+          time: Date.now().toString(),
+        });
     } catch (error) {
       console.log(error);
     }
+
     setMessages(prevMessages => [...prevMessages, newMessage]);
   };
+
   return (
     <>
       <TopBar navigation={navigation} profileStatus={true} backStatus={true} />

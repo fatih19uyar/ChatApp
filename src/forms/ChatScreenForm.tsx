@@ -36,7 +36,6 @@ const ChatScreenForm: React.FC<Props> = ({
     // Yeni mesaj geldiğinde bildirimi göster ve otomatik olarak en alta kaydır
     if (messages.length > 0) {
       setShowNotification(true);
-
       // İlk açılışta ve mesajlar yüklendiğinde scrollToEnd işlemini gerçekleştir
       if (initialLoad && flatListRef.current) {
         flatListRef.current.scrollToEnd({animated: true});
