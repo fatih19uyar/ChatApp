@@ -19,8 +19,8 @@ export interface RegisterScreenProps {
 export interface ConversationItemProps {
   id: string;
   name: string;
-  message: string;
-  timestamp: string;
+  text: string;
+  time: string;
   image: number;
 }
 export type ProfileButtonProps = {
@@ -52,6 +52,10 @@ export type Message = {
   id: string;
   sender: string;
   recipientUserID: string;
+  text: string;
+  time: string;
+};
+export type LastMessageData = {
   text: string;
   time: string;
 };
