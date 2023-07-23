@@ -54,3 +54,25 @@ export const getUserByUsername = async (username: string) => {
     return null;
   }
 };
+export const getUserById = async (id: string) => {
+  try {
+    const snapshot = await firebase
+      .database()
+      .ref('users')
+      .child(id)
+      .once('value');
+
+    const user = snapshot.val();
+    if (user) {
+      // Veritabanında kullanıcı id'si eşleşen kullanıcı varsa, username'ini döndür
+      const username = user.username;
+      return username;
+    } else {
+      // Eşleşen kullanıcı yoksa null döndür
+      return null;
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
