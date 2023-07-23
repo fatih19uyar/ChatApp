@@ -12,10 +12,9 @@ import {
 } from 'react-native';
 import {ConversationItemProps} from '../types/type';
 import {getUserByUsername} from '../utils/Firebase';
-import {convertTimestampToReadableDate} from '../utils/Time';
 
 interface ChatListScreenFormProps {
-  selectedUser: (name: string) => void;
+  selectedUser: (id: string, name: string) => void;
   lastMessage: any;
 }
 
@@ -34,14 +33,7 @@ const ConversationItem: React.FC<
   };
 
   const handleConversationPress = () => {
-    selectedUser(id);
-  };
-
-  const handleStartChat = () => {
-    if (username.trim() !== '') {
-      selectedUser(username.trim());
-      setShowModal(false);
-    }
+    selectedUser(id, name);
   };
 
   return (
@@ -104,7 +96,7 @@ const ChatListScreenForm: React.FC<ChatListScreenFormProps> = ({
     if (username !== '') {
       const userId: any = await getUserByUsername(username);
       closeStartChatModal();
-      selectedUser(userId);
+      selectedUser(userId, username);
     }
   };
   const renderConversationItem = ({item}: {item: ConversationItemProps}) => {
@@ -113,7 +105,7 @@ const ChatListScreenForm: React.FC<ChatListScreenFormProps> = ({
         id={item.id}
         name={item.name}
         text={item.text}
-        time={convertTimestampToReadableDate(parseInt(item.time))}
+        time={item.time}
         image={require('../assets/profile-picture.png')}
         selectedUser={selectedUser}
         lastMessage={undefined}

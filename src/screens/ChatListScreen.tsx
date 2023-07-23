@@ -6,6 +6,8 @@ import {RootState} from '../redux/stores';
 import {firebase} from '@react-native-firebase/database';
 import {LastMessageData} from '../types/type';
 import {Snackbar} from 'react-native-paper';
+import {convertTimestampToReadableDate} from '../utils/Time';
+import {getUserById} from '../utils/Firebase';
 
 const ChatListScreen: React.FC<any> = ({navigation}) => {
   const senderUserID: string = useSelector<RootState, string>(
@@ -21,35 +23,45 @@ const ChatListScreen: React.FC<any> = ({navigation}) => {
     setSnackbarVisible(true);
   };
 
-  const selectedUser = (id: string) => {
-    if (id) navigation.navigate('ChatScreen', {recipientUserID: id});
+  const selectedUser = (id: string, name: string) => {
+    if (id)
+      navigation.navigate('ChatScreen', {
+        recipientUserID: id,
+        recipientUserName: name,
+      });
     else {
       setTimeout(() => {
         showSnackbar('No Found User');
       }, 300);
     }
   };
-
   useEffect(() => {
     const lastMessageRef = firebase
       .database()
       .ref('lastMessages')
       .child(senderUserID);
 
-    const handleLastMessageChange = (snapshot: any) => {
-      // DataSnapshot türü yerine any kullanılıyor.
+    const handleLastMessageChange = async (snapshot: any) => {
       const lastMessageData: {[key: string]: LastMessageData} = snapshot.val();
       if (!lastMessageData) {
         setLastMessage([]);
       } else {
-        const dataArray: {id: string; text: string; time: string}[] =
-          Object.entries(lastMessageData).map(
-            ([id, messageData]: [string, LastMessageData]) => ({
-              id,
-              text: messageData.text,
-              time: messageData.time,
-            }),
-          );
+        const dataArray: {
+          id: string;
+          name: string;
+          text: string;
+          time: string;
+        }[] = [];
+
+        for (const [id, messageData] of Object.entries(lastMessageData)) {
+          const name = await getUserById(id);
+          dataArray.push({
+            id,
+            name,
+            text: messageData.text,
+            time: convertTimestampToReadableDate(parseInt(messageData.time)),
+          });
+        }
 
         setLastMessage(dataArray);
       }
@@ -65,7 +77,12 @@ const ChatListScreen: React.FC<any> = ({navigation}) => {
 
   return (
     <>
-      <TopBar navigation={navigation} profileStatus={true} backStatus={false} />
+      <TopBar
+        navigation={navigation}
+        profileStatus={true}
+        backStatus={false}
+        text=""
+      />
       <ChatListScreenForm
         selectedUser={selectedUser}
         lastMessage={lastMessage}
