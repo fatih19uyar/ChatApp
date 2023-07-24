@@ -93,7 +93,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({navigation, route}) => {
         navigation={navigation}
         profileStatus={true}
         backStatus={true}
-        text={recipientUserName}
+        text={'Chat On ' + recipientUserName}
       />
       <ChatScreenForm
         senderUserID={senderUserID}

@@ -44,6 +44,9 @@ export type SettingsItemProps = {
   title: string;
   onPress: () => void;
 };
+export interface ProfileScreenProps {
+  user: UserProfile;
+}
 
 export type SettingsScreenFormProps = {
   background: string;
@@ -59,4 +62,10 @@ export type Message = {
 export type LastMessageData = {
   text: string;
   time: string;
+};
+export type UserProfile = {
+  username: string;
+  createTime: string;
+  lastSignTime: string;
+  email: string;
 };
