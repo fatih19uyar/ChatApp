@@ -7,7 +7,7 @@ import RegisterScreenForm from '../forms/RegisterScreenForm';
 import TopBar from '../components/TopBar';
 import auth from '@react-native-firebase/auth';
 import {reset} from 'redux-form';
-import {createUserProfile} from '../utils/Firebase';
+import {createUserProfile, getUserByUsername} from '../utils/Firebase';
 
 const RegisterScreen: React.FC<RegisterScreenProps> = ({navigation}) => {
   const dispatch = useDispatch();
@@ -29,6 +29,11 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({navigation}) => {
   const onRegisterMail = async (values: any) => {
     if (values.password !== values.repassword) {
       showSnackbar('Passwords do not match', false);
+      return;
+    }
+    const existingUserId = await getUserByUsername(values.username);
+    if (existingUserId) {
+      showSnackbar('That username is already in use!', false);
       return;
     }
     auth()
