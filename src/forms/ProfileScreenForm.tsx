@@ -1,7 +1,9 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
+import {ProfileScreenProps} from '../types/type';
 
-const ProfileScreen: React.FC = () => {
+const ProfileScreenForm: React.FC<ProfileScreenProps> = ({user}) => {
+  console.log(user);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -9,21 +11,14 @@ const ProfileScreen: React.FC = () => {
           source={require('../assets/profile-picture.png')}
           style={styles.profilePicture}
         />
-        <Text style={styles.username}>John Doe</Text>
-        <Text style={styles.status}>Online</Text>
+        <Text style={styles.username}>{user.username}</Text>
+        <Text style={styles.status}>{user.email}</Text>
       </View>
       <View style={styles.content}>
-        <Text style={styles.sectionTitle}>About Me</Text>
-        <Text style={styles.aboutText}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sed
-          velit dui. Etiam auctor odio in dui ultrices eleifend.
-        </Text>
-        <Text style={styles.sectionTitle}>Interests</Text>
-        <View style={styles.interestsContainer}>
-          <Text style={styles.interest}>Photography</Text>
-          <Text style={styles.interest}>Traveling</Text>
-          <Text style={styles.interest}>Cooking</Text>
-        </View>
+        <Text style={styles.sectionTitle}>Create Time</Text>
+        <Text style={styles.aboutText}>{user.createTime}</Text>
+        <Text style={styles.sectionTitle}>Last Sign Time</Text>
+        <Text style={styles.aboutText}>{user.lastSignTime}</Text>
       </View>
     </View>
   );
@@ -89,4 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileScreen;
+export default ProfileScreenForm;

@@ -33,7 +33,7 @@ const TopBar: React.FC<TopBarProps> = ({
       )}
       <View style={styles.titleContainer}>
         {text ? (
-          <Text style={styles.title}>Chat on '{text}'</Text>
+          <Text style={styles.title}>{text}</Text>
         ) : (
           <Text style={styles.title}>ChatApp</Text>
         )}
