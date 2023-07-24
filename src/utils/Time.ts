@@ -31,3 +31,19 @@ const isSameDay = (date1: Date, date2: Date): boolean => {
 
 //   console.log(convertTimestampToReadableDate(timestamp1)); // Örnek çıktı: "12:31:03 PM"
 //   console.log(convertTimestampToReadableDate(timestamp2)); // Örnek çıktı (bugün): "6:17:25 PM"
+export const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const options: any = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  };
+  return date.toLocaleDateString('en-US', options);
+};
+
+// const timestamp = "2023-07-23T19:40:52.022Z";
+// const formattedDate = formatDate(timestamp);
+// console.log(formattedDate); // Output: "July 23, 2023, 7:40:52 PM"
