@@ -58,6 +58,7 @@ export type Message = {
   recipientUserID: string;
   text: string;
   time: string;
+  isRead: boolean;
 };
 export type LastMessageData = {
   text: string;

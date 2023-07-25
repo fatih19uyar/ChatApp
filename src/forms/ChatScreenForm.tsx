@@ -15,12 +15,14 @@ type Props = {
   messages: Message[];
   onSendMessage: (text: string) => void;
   senderUserID: string;
+  updateisReadMessage: (item: any) => void;
 };
 
 const ChatScreenForm: React.FC<Props> = ({
   messages,
   onSendMessage,
   senderUserID,
+  updateisReadMessage,
 }) => {
   const [inputText, setInputText] = useState('');
   const [showNotification, setShowNotification] = useState(false);
@@ -55,6 +57,7 @@ const ChatScreenForm: React.FC<Props> = ({
 
   const renderItem = ({item}: {item: Message}) => {
     const isSender = item.sender === senderUserID;
+    !isSender ? updateisReadMessage(item) : null;
     const containerStyle = isSender
       ? styles.senderContainer
       : styles.receiverContainer;
