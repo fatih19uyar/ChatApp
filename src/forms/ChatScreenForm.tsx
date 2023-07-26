@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -34,19 +34,6 @@ const ChatScreenForm: React.FC<Props> = ({
   const sortedMessages = messages
     .slice()
     .sort((a: any, b: any) => a.time - b.time);
-
-  useEffect(() => {
-    // Yeni mesaj geldiğinde bildirimi göster ve otomatik olarak en alta kaydır
-    setTimeout(() => {
-      if (messages.length > 0) {
-        setShowNotification(false);
-        // İlk açılışta ve mesajlar yüklendiğinde scrollToEnd işlemini gerçekleştir
-        if (initialLoad && flatListRef.current) {
-          //  flatListRef.current.scrollToEnd({animated: true});
-        }
-      }
-    }, 200);
-  }, [messages, initialLoad]);
 
   const handleNotificationPress = () => {
     // Bildirime tıklandığında FlatList'i en alta kaydır
@@ -93,13 +80,19 @@ const ChatScreenForm: React.FC<Props> = ({
   return (
     <View style={styles.container}>
       {showNotification && <Notification onPress={handleNotificationPress} />}
-      <FlatList
-        ref={flatListRef}
-        data={sortedMessages}
-        keyExtractor={(item: any) => item.id}
-        renderItem={renderItem}
-        onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
-      />
+      {messages.length > 0 ? (
+        <FlatList
+          ref={flatListRef}
+          data={sortedMessages}
+          keyExtractor={(item: any) => item.id}
+          renderItem={renderItem}
+          onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
+        />
+      ) : (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading...</Text>
+        </View>
+      )}
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -134,6 +127,14 @@ const styles = StyleSheet.create({
   },
   senderText: {
     fontSize: 16,
+    color: 'black',
+  },
+  loadingText: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
     color: 'black',
   },
   receiverText: {
