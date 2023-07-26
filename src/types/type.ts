@@ -53,7 +53,6 @@ export type SettingsScreenFormProps = {
   onBackgroundChange: (imageUri: string) => void;
 };
 export type Message = {
-  id: string;
   sender: string;
   recipientUserID: string;
   text: string;

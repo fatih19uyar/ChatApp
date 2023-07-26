@@ -49,31 +49,41 @@ const ChatScreen: React.FC<ChatScreenProps> = ({navigation, route}) => {
       }
     });
   }, [senderUserID, recipientUserID]);
-  const updateisReadMessage = async (item: Message) => {
-    if (!item.isRead)
-      await database()
-        .ref('/messages/')
-        .child(item.id)
-        .update({
-          isRead: true,
-        })
-        .then(() => console.log('Message read updated.'));
+  const updateisReadMessage = async (item: any) => {
+    await database()
+      .ref('/messages/')
+      .child(item.id)
+      .update({
+        isRead: true,
+      })
+      .then(() => {
+        console.log('Message read updated.');
+        // messages dizisindeki ilgili mesajın isRead alanını güncelle
+        setMessages(prevMessages =>
+          prevMessages.map((message: any) =>
+            message.id === item.id ? {...message, isRead: true} : message,
+          ),
+        );
+      });
   };
   const handleSendMessage = async (text: string) => {
     const newMessage: Message = {
-      id: '4f93c62e-72aa-46f9-8659-9aea16c248cb',
       sender: senderUserID,
       recipientUserID: recipientUserID,
       text: text,
       time: Date.now().toString(),
       isRead: false,
     };
-
+    const messageId = String(uuid.v4());
+    const updatedMessage: any = {
+      id: messageId,
+      ...newMessage,
+    };
     try {
       // 'messages' düğümüne yeni mesajı ekleyin
       await database()
         .ref('/messages/')
-        .child(String(uuid.v4()))
+        .child(messageId)
         .set(newMessage)
         .then(() => console.log('Data set.'));
       // Gönderenin altında alıcının son mesajını güncelleyin
@@ -103,7 +113,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({navigation, route}) => {
       console.log(error);
     }
 
-    setMessages(prevMessages => [...prevMessages, newMessage]);
+    setMessages(prevMessages => [...prevMessages, updatedMessage]);
   };
   return (
     <>

@@ -3,13 +3,17 @@ export const convertTimestampToReadableDate = (timestamp: number): string => {
   const now = new Date();
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
-
+  const twoDaysAgo = new Date(now);
+  twoDaysAgo.setDate(now.getDate() - 2);
   if (isSameDay(date, now)) {
     // Eğer tarih bugüne aitse saat bilgisini döndür
     return date.toLocaleTimeString();
   } else if (isSameDay(date, yesterday)) {
     // Eğer tarih dün gününe aitse "Dün" yazısı döndür
-    return 'Yersterday';
+    return 'Yersterday ' + date.toLocaleTimeString();
+  } else if (date >= twoDaysAgo) {
+    // Eğer tarih dünden önceki gün ise tarih ve saat bilgisini döndür
+    return date.toLocaleString();
   } else {
     // Aksi halde sadece tarih bilgisini döndür
     return date.toLocaleDateString();

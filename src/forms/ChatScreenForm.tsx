@@ -37,14 +37,15 @@ const ChatScreenForm: React.FC<Props> = ({
 
   useEffect(() => {
     // Yeni mesaj geldiğinde bildirimi göster ve otomatik olarak en alta kaydır
-    if (messages.length > 0) {
-      setShowNotification(true);
-      // İlk açılışta ve mesajlar yüklendiğinde scrollToEnd işlemini gerçekleştir
-      if (initialLoad && flatListRef.current) {
-        flatListRef.current.scrollToEnd({animated: true});
-        setInitialLoad(false); // İlk açılış durumunu false olarak güncelle
+    setTimeout(() => {
+      if (messages.length > 0) {
+        setShowNotification(false);
+        // İlk açılışta ve mesajlar yüklendiğinde scrollToEnd işlemini gerçekleştir
+        if (initialLoad && flatListRef.current) {
+          //  flatListRef.current.scrollToEnd({animated: true});
+        }
       }
-    }
+    }, 200);
   }, [messages, initialLoad]);
 
   const handleNotificationPress = () => {
@@ -57,14 +58,23 @@ const ChatScreenForm: React.FC<Props> = ({
 
   const renderItem = ({item}: {item: Message}) => {
     const isSender = item.sender === senderUserID;
-    !isSender ? updateisReadMessage(item) : null;
+    !isSender && !item.isRead ? updateisReadMessage(item) : null;
     const containerStyle = isSender
       ? styles.senderContainer
       : styles.receiverContainer;
     const textStyle = isSender ? styles.senderText : styles.receiverText;
     return (
       <View style={[styles.messageContainer, containerStyle]}>
-        <Text style={textStyle}>{item.text}</Text>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={textStyle}>{item.text}</Text>
+          {isSender ? (
+            item.isRead ? (
+              <Text style={{color: 'red', marginLeft: 5}}>✔️</Text>
+            ) : (
+              <Text style={{color: 'gray', marginLeft: 5}}>✓</Text>
+            )
+          ) : null}
+        </View>
         <Text style={styles.timeText}>
           {convertTimestampToReadableDate(parseInt(item.time))}
         </Text>
@@ -86,14 +96,11 @@ const ChatScreenForm: React.FC<Props> = ({
       <FlatList
         ref={flatListRef}
         data={sortedMessages}
-        keyExtractor={item => item.id}
+        keyExtractor={(item: any) => item.id}
         renderItem={renderItem}
-        onContentSizeChange={() => {
-          if (sentMessageCount > 0 && flatListRef.current) {
-            flatListRef.current.scrollToEnd({animated: true});
-          }
-        }}
+        onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
       />
+
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
