@@ -22,6 +22,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({navigation, route}) => {
   // Messages Firebase'den çekme işlemi
   useEffect(() => {
     let messagesRef = database().ref('/messages/');
+
     // Verileri çek ve snapshot değerine eriş
     messagesRef.once('value').then(snapshot => {
       const transformedData: Message[] = Object.entries(snapshot.val()).map(
@@ -30,7 +31,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({navigation, route}) => {
           ...data,
         }),
       );
-      console.log(transformedData);
+      console.log('s', transformedData);
       if (transformedData) {
         // Veri mevcutsa yeni mesajlar var demektir
         const incomingMessages: Message[] = Object.values(transformedData);
@@ -48,7 +49,39 @@ const ChatScreen: React.FC<ChatScreenProps> = ({navigation, route}) => {
         setMessages([]);
       }
     });
+
+    // Realtime Database'deki 'messages' düğümünde veri değişikliklerini takip ediyoruz
+    messagesRef.on('value', snapshot => {
+      if (snapshot.val()) {
+        const transformedData: Message[] = Object.entries(snapshot.val()).map(
+          ([id, data]: [string, any]) => ({
+            id,
+            ...data,
+          }),
+        );
+        if (transformedData) {
+          // Veri mevcutsa yeni mesajlar var demektir
+          const incomingMessages: Message[] = Object.values(transformedData);
+          // Mesajları gönderen ve alıcısına göre filtreleyip güncelliyoruz
+          const filteredMessages = incomingMessages.filter(
+            message =>
+              (message.sender === senderUserID &&
+                message.recipientUserID === recipientUserID) ||
+              (message.sender === recipientUserID &&
+                message.recipientUserID === senderUserID),
+          );
+          // setState ile mesajları güncelliyoruz
+          setMessages(filteredMessages);
+        } else {
+          setMessages([]);
+        }
+      }
+    });
+
+    // Component unmount olduğunda veri değişikliklerini dinlemeyi durduruyoruz
+    return () => messagesRef.off('value');
   }, [senderUserID, recipientUserID]);
+
   const updateisReadMessage = async (item: any) => {
     await database()
       .ref('/messages/')
@@ -81,13 +114,13 @@ const ChatScreen: React.FC<ChatScreenProps> = ({navigation, route}) => {
     };
     try {
       // 'messages' düğümüne yeni mesajı ekleyin
-      await database()
+      database()
         .ref('/messages/')
         .child(messageId)
         .set(newMessage)
         .then(() => console.log('Data set.'));
       // Gönderenin altında alıcının son mesajını güncelleyin
-      await firebase
+      firebase
         .database()
         .ref('lastMessages')
         .child(senderUserID)
@@ -97,9 +130,8 @@ const ChatScreen: React.FC<ChatScreenProps> = ({navigation, route}) => {
           time: Date.now().toString(),
           isRead: false,
         });
-
       // Alıcının altında gönderenin son mesajını güncelleyin
-      await firebase
+      firebase
         .database()
         .ref('lastMessages')
         .child(recipientUserID)
